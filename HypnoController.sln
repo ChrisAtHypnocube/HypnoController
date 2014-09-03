@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypnoController", "HypnoController\HypnoController.csproj", "{BDA64E27-DE5E-44B8-94CB-C4E195614EEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibHypnocube", "LibHypnocube\LibHypnocube.csproj", "{F6EEC0CB-C0EC-4F3F-AD8B-22074381CFA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypnoDemo", "HypnoDemo\HypnoDemo.csproj", "{82DBBEA4-FBE3-4381-B83C-504E53613461}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypnoSerialTester", "HypnoSerialTester\HypnoSerialTester.csproj", "{08D0D238-FF83-48E8-8ADB-640454333892}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6C9AA9BB-84F1-4561-9D33-70B339C9C31C}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Device", "Device", "{9010D0EA-CC65-452A-BA6F-133E0E624EAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypnoLsd", "Device\HypnoLsd\HypnoLsd.csproj", "{52905565-5D09-4428-A4F8-160677924EB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDA64E27-DE5E-44B8-94CB-C4E195614EEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA64E27-DE5E-44B8-94CB-C4E195614EEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA64E27-DE5E-44B8-94CB-C4E195614EEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA64E27-DE5E-44B8-94CB-C4E195614EEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6EEC0CB-C0EC-4F3F-AD8B-22074381CFA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6EEC0CB-C0EC-4F3F-AD8B-22074381CFA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6EEC0CB-C0EC-4F3F-AD8B-22074381CFA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6EEC0CB-C0EC-4F3F-AD8B-22074381CFA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82DBBEA4-FBE3-4381-B83C-504E53613461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82DBBEA4-FBE3-4381-B83C-504E53613461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82DBBEA4-FBE3-4381-B83C-504E53613461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82DBBEA4-FBE3-4381-B83C-504E53613461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08D0D238-FF83-48E8-8ADB-640454333892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08D0D238-FF83-48E8-8ADB-640454333892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08D0D238-FF83-48E8-8ADB-640454333892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08D0D238-FF83-48E8-8ADB-640454333892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52905565-5D09-4428-A4F8-160677924EB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52905565-5D09-4428-A4F8-160677924EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52905565-5D09-4428-A4F8-160677924EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52905565-5D09-4428-A4F8-160677924EB4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{52905565-5D09-4428-A4F8-160677924EB4} = {9010D0EA-CC65-452A-BA6F-133E0E624EAC}
+	EndGlobalSection
+EndGlobal

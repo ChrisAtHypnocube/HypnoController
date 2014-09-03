@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{82DBBEA4-FBE3-4381-B83C-504E53613461}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hypnocube.Demo</RootNamespace>
+    <AssemblyName>HypnoDemo</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\Ball.cs" />
+    <Compile Include="Model\BitmapFont.cs" />
+    <Compile Include="Model\BounceBall.cs" />
+    <Compile Include="Model\DemoManager.cs" />
+    <Compile Include="Model\Demos\Axes.cs" />
+    <Compile Include="Model\Demos\Balls.cs" />
+    <Compile Include="Model\Demos\Black.cs" />
+    <Compile Include="Model\Demos\Bouncer.cs" />
+    <Compile Include="Model\Demos\Chemicals.cs" />
+    <Compile Include="Model\Demos\DemoBase.cs" />
+    <Compile Include="Model\Demos\Fire.cs" />
+    <Compile Include="Model\Demos\Flags.cs" />
+    <Compile Include="Model\Demos\Genetic.cs" />
+    <Compile Include="Model\Demos\Heartbeat.cs" />
+    <Compile Include="Model\Demos\ImagePlayback.cs" />
+    <Compile Include="Model\Demos\Life.cs" />
+    <Compile Include="Model\Demos\Liner.cs" />
+    <Compile Include="Model\Demos\Mandelzoom.cs" />
+    <Compile Include="Model\Demos\Maze.cs" />
+    <Compile Include="Model\Demos\MazeGenerator.cs" />
+    <Compile Include="Model\Demos\Plasma.cs" />
+    <Compile Include="Model\Demos\Plasma2.cs" />
+    <Compile Include="Model\Demos\Plasma3.cs" />
+    <Compile Include="Model\Demos\Polyhedra.cs" />
+    <Compile Include="Model\Demos\RandomNoise.cs" />
+    <Compile Include="Model\Demos\RasterBar.cs" />
+    <Compile Include="Model\Demos\RaytracerDemo.cs" />
+    <Compile Include="Model\Demos\Ripples.cs" />
+    <Compile Include="Model\Demos\Rotozoomer.cs" />
+    <Compile Include="Model\Demos\Scrolly.cs" />
+    <Compile Include="Model\Demos\Scrolly2.cs" />
+    <Compile Include="Model\Demos\SineWave.cs" />
+    <Compile Include="Model\Demos\Solid.cs" />
+    <Compile Include="Model\Demos\Surface.cs" />
+    <Compile Include="Model\Demos\Termite.cs" />
+    <Compile Include="Model\Demos\VectorBalls.cs" />
+    <Compile Include="Model\Demos\Voroni.cs" />
+    <Compile Include="Model\Demos\Wormhole.cs" />
+    <Compile Include="Model\Demos\Worms.cs" />
+    <Compile Include="Model\Demos\Xor.cs" />
+    <Compile Include="Model\FlagData.cs" />
+    <Compile Include="Model\Font1.cs" />
+    <Compile Include="Model\Font2.cs" />
+    <Compile Include="Model\FontController.cs" />
+    <Compile Include="Model\FPS.cs" />
+    <Compile Include="Model\Playback.cs" />
+    <Compile Include="Model\Raytracer\Animation.cs" />
+    <Compile Include="Model\Raytracer\Camera.cs" />
+    <Compile Include="Model\Raytracer\Color.cs" />
+    <Compile Include="Model\Raytracer\Disk.cs" />
+    <Compile Include="Model\Raytracer\Material.cs" />
+    <Compile Include="Model\Raytracer\Math3D.cs" />
+    <Compile Include="Model\Raytracer\Plane.cs" />
+    <Compile Include="Model\Raytracer\Primitive.cs" />
+    <Compile Include="Model\Raytracer\Ray.cs" />
+    <Compile Include="Model\Raytracer\Rectangle.cs" />
+    <Compile Include="Model\Raytracer\Render.cs" />
+    <Compile Include="Model\Raytracer\Scene.cs" />
+    <Compile Include="Model\Raytracer\Sphere.cs" />
+    <Compile Include="Model\Remappings\Cylinder10K.cs" />
+    <Compile Include="Model\Remappings\Cylinder1x1.cs" />
+    <Compile Include="Model\Remappings\Cylinder3x2.cs" />
+    <Compile Include="Model\Remappings\Flat960.cs" />
+    <Compile Include="Model\Remappings\Panels.cs" />
+    <Compile Include="Model\Remappings\Remapper.cs" />
+    <Compile Include="Model\Remappings\Unstructured.cs" />
+    <Compile Include="Model\Renderer\Color.cs" />
+    <Compile Include="Model\Renderer\DDA.cs" />
+    <Compile Include="Model\Renderer\Draw.cs" />
+    <Compile Include="Model\Renderer\Math3D.cs" />
+    <Compile Include="Model\Renderer\Mesh.cs" />
+    <Compile Include="Model\Renderer\Polyhedra.cs" />
+    <Compile Include="Model\Renderer\Render.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\DemoControlViewModel.cs" />
+    <Compile Include="View\DemoControl.xaml.cs">
+      <DependentUpon>DemoControl.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Device\HypnoLsd\HypnoLsd.csproj">
+      <Project>{52905565-5d09-4428-a4f8-160677924eb4}</Project>
+      <Name>HypnoLsd</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibHypnocube\LibHypnocube.csproj">
+      <Project>{f6eec0cb-c0ec-4f3f-ad8b-22074381cfa4}</Project>
+      <Name>LibHypnocube</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="View\DemoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

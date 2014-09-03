@@ -1,0 +1,331 @@
+﻿<!--
+#region License
+// The MIT License (MIT)
+// Copyright (c) 2013-2014 Hypnocube, LLC
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+#endregion
+    -->
+<UserControl x:Class="Hypnocube.Demo.View.DemoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Hypnocube.Demo.ViewModel"
+             xmlns:t="clr-namespace:Hypnocube.WPFTools;assembly=LibHypnocube"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="800"
+            Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <t:TypeValueConverter x:Key="typeConverter" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:DemoControlViewModel />
+    </UserControl.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <TextBlock Width="100">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="FPS: {0:F1}/{1}">
+                        <Binding Path="ActualFramesPerSecond" />
+                        <Binding Path="FramesPerSecond" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+            <TextBlock Margin="10,0"
+                       Text="{Binding ElementName=brightnessSlider, Path=Value,StringFormat=Brightness: {0:F0}}"
+                       Width="90" />
+            <Slider Minimum="0" Maximum="100" Name="brightnessSlider" Value="{Binding Brightness}" />
+        </DockPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="0">
+
+                <GroupBox DockPanel.Dock="Bottom" DataContext="{Binding SelectedScheduledDemo}" >
+                    <GroupBox.Header>
+                        <TextBlock Text="{Binding ParameterText.Length, StringFormat=Demo parameters (length {0})}"/>
+                    </GroupBox.Header>
+                <DockPanel >
+                    <TextBox 
+                        Text="{Binding ParameterText}"
+                        ToolTip="{Binding ParameterDescription}"
+                        />
+                </DockPanel>
+                </GroupBox>
+
+
+                <Grid  >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <GridSplitter Grid.Column="1" Grid.Row="0"
+              Grid.RowSpan="3" 
+              HorizontalAlignment="Center" 
+              VerticalAlignment="Stretch"
+              ShowsPreview="true"
+              ResizeDirection="Auto"
+              Width="5"/>
+
+                    <GridSplitter Grid.Column="0"  Grid.Row="1" 
+              Grid.ColumnSpan="3" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Center"
+              ShowsPreview="true"
+              ResizeDirection="Auto"
+              Height="5"/>
+
+
+                    <DockPanel Grid.Column="0" Grid.Row="0">
+                        <Button 
+                            DockPanel.Dock="Top" 
+                        Command="{Binding StartStopCommand}" 
+                        ToolTip="Connect to the selected port">
+                            <Button.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                            <Setter Property="Button.Content" Value="Start playback" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter Property="Button.Content" Value="Stop playback" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+
+                        <Expander DockPanel.Dock="Top" Header="Demo Baud Rate" IsExpanded="True">
+                            <TextBox Text="{Binding BaudRate}"/>
+                        </Expander>
+                        <Expander Header="Commands" DockPanel.Dock="Bottom" IsExpanded="True">
+                            <StackPanel>
+                                <CheckBox IsChecked="{Binding CycleAnimations}">Cycle animations</CheckBox>
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Column="0" Grid.Row="0">frames per anim</TextBlock>
+                                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding AnimationLength}" />
+                                    <TextBlock Grid.Column="0" Grid.Row="1">Frames per second</TextBlock>
+                                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding FramesPerSecond}"  />
+                                    <TextBlock Grid.Column="0" Grid.Row="2">Gamma on output</TextBlock>
+                                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding GammaCorrection}"  />
+                                </Grid>
+                                <CheckBox IsChecked="{Binding UseGammaCorrection}">Use gamma</CheckBox>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="Panel size" DockPanel.Dock="Bottom" IsExpanded="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="18" />
+                                    <ColumnDefinition Width="18"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">Width</TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Height</TextBlock>
+                                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}"  />
+                                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}"  />
+                            </Grid>
+                        </Expander>
+
+                        <Expander Header="Remapping" IsExpanded="True" >
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                                    <TextBlock>Strands</TextBlock>
+                                    <TextBox Text="{Binding Strands}" Width="30" />
+                                </StackPanel>
+                                <ListBox ItemsSource="{Binding Remappings}" SelectedItem="{Binding SelectedRemapping}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ., Converter={StaticResource typeConverter}}" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+                        </Expander>
+
+
+                    </DockPanel>
+
+                    <DockPanel Grid.Column="2" Grid.Row="0">
+                        <Expander Header="Blacklist" DockPanel.Dock="Bottom" IsExpanded="False">
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0">X start</TextBlock>
+                                    <TextBlock Grid.Row="1" Grid.Column="0">Y start</TextBlock>
+                                    <TextBlock Grid.Row="2" Grid.Column="0">Width</TextBlock>
+                                    <TextBlock Grid.Row="3" Grid.Column="0">Height</TextBlock>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ClipX}" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ClipY}" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ClipWidth}" />
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ClipHeight}" />
+                                    <Button Grid.Row="4" Grid.Column="0" Command="{Binding AddClipCommand}">Add</Button>
+                                    <Button Grid.Row="4" Grid.Column="1" Command="{Binding DeleteClipCommand}">Delete</Button>
+                                </Grid>
+                                <ListBox  DockPanel.Dock="Top" Height="100" ItemsSource="{Binding ClipList}"
+                             SelectedItem="{Binding SelectedClipping}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="({0},{1}:{2},{3})">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="Width" />
+                                                        <Binding Path="Height" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+                        </Expander>
+                        <Expander Header="Playback" DockPanel.Dock="Bottom" IsExpanded="True">
+                            <StackPanel>
+                                <CheckBox IsChecked="{Binding SaveImages}" ToolTip="If checked, saves PNG images for playback">Save Images</CheckBox>
+                                <Button Command="{Binding PlaybackImagesCommand}" ToolTip="Press to playback images">Play Images</Button>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="Settings save/load" IsExpanded="True" >
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Bottom">
+                                    <TextBox ToolTip="Enter new name here and press 'New' for new setting type"
+                                     Text="{Binding SettingName}" />
+                                    <UniformGrid Columns="2">
+                                        <Button Command="{Binding DeleteSettingCommand}">Delete</Button>
+                                        <Button Command="{Binding NewSettingCommand}">New</Button>
+                                    </UniformGrid>
+                                </StackPanel>
+                                <ListBox ItemsSource="{Binding Settings}" SelectedItem="{Binding SelectedSetting}" />
+                            </DockPanel>
+
+                        </Expander>
+                    </DockPanel>
+
+                    <GroupBox Header="Visualizations" Grid.Row="2" Grid.Column="0">
+                        <DockPanel>
+                            <UniformGrid DockPanel.Dock="Top" Columns="2">
+                                <Button Command="{Binding AddSelectedVisualizationToScheduleCommand}">Add selected to demo</Button>
+                                <Button Command="{Binding AddAllVisualizationsToScheduleCommand}">Add all to demo</Button>
+                            </UniformGrid>
+                            <ListBox ItemsSource="{Binding DemoManager.VisualizationTypes}"
+                                 SelectedItem="{Binding SelectedVisualization}">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add all" Command="{Binding AddAllVisualizationsCommand}" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Name}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+
+                    </GroupBox>
+
+                    <GroupBox Header="Demo order" Grid.Row="2" Grid.Column="2">
+                        <DockPanel>
+                            <UniformGrid Columns="3" DockPanel.Dock="Top">
+                                <Button Command="{Binding DeleteSelectedDemoCommand}">Delete</Button>
+                                <Button Command="{Binding MoveSelectedDemoUpCommand}">Up</Button>
+                                <Button Command="{Binding MoveSelectedDemoDownCommand}">Down</Button>
+                            </UniformGrid>
+                            <ListBox ItemsSource="{Binding DemoManager.VisualizationSchedule}"
+                             SelectedIndex="{Binding SelectedDemoIndex, Mode=TwoWay}"
+                                     SelectedItem="{Binding SelectedScheduledDemo}"
+                                     >
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Delete all" Command="{Binding DeleteAllDemosCommand}" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding FrameLength}" Width="45" />
+                                            <TextBlock Text="{Binding DemoType.Name}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+
+                            </ListBox>
+                        </DockPanel>
+                    </GroupBox>
+
+
+
+                </Grid>
+            </DockPanel>
+            <GridSplitter Grid.Column="1" Grid.Row="0"
+              HorizontalAlignment="Center" 
+              VerticalAlignment="Stretch"
+              ResizeDirection="Auto"
+              ShowsPreview="true"
+              Width="5"/>
+
+            <Grid Background="BlanchedAlmond" Grid.Column="2" >
+                <Image StretchDirection="Both" Source="{Binding ImageSource}"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
+            </Grid>
+        </Grid>
+
+
+    </DockPanel>
+</UserControl>

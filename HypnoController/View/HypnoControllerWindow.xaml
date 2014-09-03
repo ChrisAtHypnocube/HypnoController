@@ -1,0 +1,96 @@
+﻿<!--
+#region License
+// The MIT License (MIT)
+// Copyright (c) 2013-2014 Hypnocube, LLC
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+#endregion
+    -->
+<Window x:Class="Hypnocube.HypnoController.View.HypnoControllerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:demo="clr-namespace:Hypnocube.Demo.View;assembly=HypnoDemo"
+        xmlns:serial="clr-namespace:Hypnocube.SerialTester.View;assembly=HypnoSerialTester"
+        xmlns:v="clr-namespace:Hypnocube.HypnoController.View"
+        xmlns:vm="clr-namespace:Hypnocube.HypnoController.ViewModel"
+        Title="Hypnocube Generic Controller v0.5 Aug 2014" Height="800" Width="1200"
+        Icon="pack://application:,,,/Resources/Logo.png"
+        Loaded="OnLoaded"
+        Closing="OnClosing"
+        >
+    <Window.DataContext>
+        <vm:HypnoControllerViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBar.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Margin" Value="5,0" />
+                </Style>
+            </StatusBar.Resources>
+            <TextBlock Text="{Binding Status}"/>
+            <TextBlock Text="{Binding Device.IsConnected, StringFormat=Connected: {0}}" />
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Serial errors:(Total {0}, Frame {1}, Overrun {2}, RXOverflow {3}, RXParity {4}, TXFull {5})">
+                        <Binding Path="Device.SerialErrorsReceived" />
+                        <Binding Path="Device.FrameErrors" />
+                        <Binding Path="Device.OverrunErrors" />
+                        <Binding Path="Device.RXOverflowErrors" />
+                        <Binding Path="Device.RXParityErrors" />
+                        <Binding Path="Device.TXFullErrors" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Hyperlink NavigateUri="http://www.hypnocube.com" Command="{Binding ExecuteHyperlinkCommand}">www.Hypnocube.com</Hyperlink>
+            </StatusBarItem>
+        </StatusBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+    <TabControl Grid.Column="0" Grid.Row="0">
+        <TabItem Header="Demo">
+        <demo:DemoControl x:Name="DemoControl"/>
+        </TabItem>
+        <TabItem Header="Serial Tester">
+            <serial:SerialTesterControl x:Name="SerialTesterControl"/>
+        </TabItem>
+    </TabControl>
+
+         <GridSplitter Grid.Row="1" Grid.Column="0"
+          ResizeDirection="Auto"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Center"
+          ShowsPreview="True"
+          Height="5"
+          />
+            <DockPanel Grid.Row="2" >
+                    <GroupBox Header="Connection" DockPanel.Dock="Left" Width="200">
+                            <v:ConnectionControl x:Name="ConnectionControl"/>
+                    </GroupBox>
+                <v:LoggingControl x:Name="LoggingControl" />
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

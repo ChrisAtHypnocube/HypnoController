@@ -1,0 +1,468 @@
+﻿<!--
+#region License
+// The MIT License (MIT)
+// Copyright (c) 2013-2014 Hypnocube, LLC
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+#endregion
+    -->
+<UserControl x:Class="Hypnocube.SerialTester.View.SerialTesterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+                xmlns:vm="clr-namespace:Hypnocube.SerialTester.ViewModel"
+                xmlns:avalonedit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
+             
+             mc:Ignorable="d" 
+             d:DesignWidth="1000" d:DesignHeight="600" > 
+    <UserControl.DataContext>
+        <vm:SerialTesterViewModel/>
+    </UserControl.DataContext>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="350">
+            <StackPanel>
+                <GroupBox Header="Miscellaneous commands" DockPanel.Dock="Bottom" IsEnabled="{Binding IsConnectedAndNotDrawing}" >
+                    <StackPanel>
+                        <UniformGrid Columns="2" >
+                            <Button Command="{Binding HelpCommand}" Content="Help" ToolTip="Get help on the commands from the device."/>
+                            <Button Command="{Binding VersionCommand}" Content="Version" ToolTip="Get version byte from the device."/>
+                            <Button Command="{Binding DumpInfoCommand}" Content="Dump info" ToolTip="Dump information from the device."/>
+                            <Button Command="{Binding DumpStatsCommand}" Content="Dump stats" ToolTip="Dump stats from the device."/>
+                            <Button Command="{Binding SizesCommand}" Content="Sizes" ToolTip="Get maximum height for each supported width."/>
+                            <Button Command="{Binding ThroughputTestCommand}" ToolTip="Runs throughput test. Stops program for 2 seconds">Throughput</Button>
+                            <Button Command="{Binding ResetStatsCommand}" ToolTip="Reset stats counters">Reset Stats</Button>
+                            <Button Command="{Binding SaveSettingsCommand}" ToolTip="Save settings to flash">Save settings</Button>
+                            <Button Command="{Binding DumpTimingsCommand}" ToolTip="Dump timings">Dump timings</Button>
+                            <CheckBox IsChecked="{Binding DiagnosticLedState}" ToolTip="Enables/disables the on board diagnostic LED">LED used</CheckBox>
+                        </UniformGrid>
+                        <TextBlock Text="{Binding ThroughputFps, StringFormat=Throughput: {0:F2}}" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Image Size. Height max based on width." IsEnabled="{Binding IsConnectedAndNotDrawing}" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0">Width (1-16)</TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding WidthText}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0">Height (1-65535)</TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HeightText}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Device.ImageSize, StringFormat=ImageSize {0}}"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1" >
+                            <Button Command="{Binding SetSizeCommand}">Set</Button>
+                            <Button Command="{Binding GetSizeCommand}">Get</Button>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+            </StackPanel>
+            <GroupBox IsEnabled="{Binding IsConnectedAndNotDrawing}" >
+                <GroupBox.Header>
+                    <TextBlock Text="{Binding Device.PicClockSpeed, StringFormat=Baud Rate (PIC clock {0})}"/>
+                </GroupBox.Header>
+                <DockPanel>
+                    <UniformGrid Columns="4" DockPanel.Dock="Bottom">
+                        <TextBlock >Desired:</TextBlock>
+                        <TextBlock >Actual:</TextBlock>
+                        <TextBlock >Error:</TextBlock>
+                        <TextBlock >Divider:</TextBlock>
+                        <TextBox Text="{Binding DesiredBaudRateText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="{Binding ActualBaudRateText}"/>
+                        <TextBlock Text="{Binding ErrorRateText}"/>
+                        <TextBox Text="{Binding BaudDivisorText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Command="{Binding GetSpeedCommand}">Get speed</Button>
+                        <Button Command="{Binding SwitchSpeedCommand}">Set speed</Button>
+                    </UniformGrid>
+                    <TabControl>
+                        <TabItem Header="Baud Rates">
+                            <ListView 
+                        ItemsSource="{Binding SerialSpeeds}" 
+                        SelectedItem="{Binding SelectedSpeed}" VerticalAlignment="Bottom"
+                        >
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="60" Header="Desired" DisplayMemberBinding="{Binding TargetRate}" />
+                                        <GridViewColumn Width="70" Header="Actual" DisplayMemberBinding="{Binding ActualBaud, StringFormat={}{0:F1}}" />
+                                        <GridViewColumn Width="40" Header="Error" DisplayMemberBinding="{Binding PercentError, StringFormat={}{0:F1}}" />
+                                        <GridViewColumn Width="50" Header="Divider" DisplayMemberBinding="{Binding Setting}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </TabItem>
+                        <TabItem Header="Baud calculator">
+                            <StackPanel>
+                                <Image Source="/SerialTester;component/BaudImage.png" />
+                                <StackPanel Visibility="Collapsed">
+                                    <TextBlock>PIC: baud = clock/(4*(div+1)), 0&lt;=div&lt;=65535</TextBlock>
+                                    <TextBlock>FTDI 232??: baud = 3M/(n+d/8)</TextBlock>
+                                    <TextBlock>2&lt;=n&lt;=16384,0&lt;=d&lt;=7</TextBlock>
+                                    <TextBlock>   Special cases: (n,d)=(0,0)=>3M,(n,d)=(1,0)=>2M</TextBlock>
+                                    <TextBlock>   Allows +-3% error</TextBlock>
+                                    <TextBlock>FTDI 232H: baud = 60M/(n+d/8), 0&lt;=n??&lt;=65535</TextBlock>
+                                    <TextBlock>   Special cases: 7M,9M,10M,11M not allowed</TextBlock>
+                                    <TextBlock>   Allows +-3% error</TextBlock>
+                                    <TextBlock>_</TextBlock>
+                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock
+                            Grid.Row="0" Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                            >Actual Rate
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="0" Grid.Column="2"
+                                            HorizontalAlignment="Right"
+                            >% Error
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="0" Grid.Column="3"
+                                            HorizontalAlignment="Right"
+                            >Settings
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="1" Grid.Column="0"
+                            >PIC
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="1" Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            
+                            Text="{Binding Rates[0].ActualBaud, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="1" Grid.Column="2"
+                                            HorizontalAlignment="Right"
+                            Text="{Binding Rates[0].PercentError, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="1" Grid.Column="3"
+                                            HorizontalAlignment="Right"
+                            Text="{Binding Rates[0].Setting}"
+                            />
+                                    <TextBlock
+                            Grid.Row="2" Grid.Column="0"
+                            >FTDI Low
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="2" Grid.Column="1"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[1].ActualBaud, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="2" Grid.Column="2"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[1].PercentError, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="2" Grid.Column="3"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[1].Setting}"
+                            />
+                                    <TextBlock
+                            Grid.Row="3" Grid.Column="0"
+                            >FTDI High
+                                    </TextBlock>
+                                    <TextBlock
+                            Grid.Row="3" Grid.Column="1"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[2].ActualBaud, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="3" Grid.Column="2"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[2].PercentError, StringFormat={}{0:F1}}"
+                            />
+                                    <TextBlock
+                            Grid.Row="3" Grid.Column="3"
+                                                                                        HorizontalAlignment="Right"
+
+                            Text="{Binding Rates[2].Setting}"
+                            />
+                                </Grid>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+                </DockPanel>
+            </GroupBox>
+            <StackPanel>
+                <GroupBox Header="Serial connection testing" IsEnabled="{Binding IsConnectedAndNotDrawing}"  >
+                    <StackPanel >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock 
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="{Binding RamSize, StringFormat=Buffer size (1-{0})}"/>
+                            <TextBox 
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding TestBufferSize}"/>
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                >Count (1-100000)</TextBlock>
+                            <TextBox 
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="{Binding TestBufferCount}"/>
+                        </Grid>
+                        <CheckBox IsChecked="{Binding InjectTestingErrors}">Inject one error per pass</CheckBox>
+                        <Button Command="{Binding TestSerialBufferCommand}">Run Error Test</Button>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Dump Ram" IsEnabled="{Binding IsConnectedAndNotDrawing}" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Command ="{Binding DumpRAMCommand}">Dump bytes 1-30000</Button>
+                        <TextBox 
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Text="{Binding DumpRamText}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Device user ID" IsEnabled="{Binding IsConnectedAndNotDrawing}" >
+                    <UniformGrid Columns="2">
+                        <TextBlock Text="User ID 0-65535"/>
+                        <TextBox Text="{Binding IdBufferText}"/>
+                        <Button Command ="{Binding SetIdCommand}">Set ID</Button>
+                        <Button Command ="{Binding GetIdCommand}">Get ID</Button>
+                    </UniformGrid>
+                </GroupBox>
+                <GroupBox Header="Demos">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Column="0" Grid.Row="0" Command="{Binding SetDemoDelayCommand}">Set demo delay</Button>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding DemoDelayText}" />
+                        <TextBlock Grid.Column="0" Grid.Row="1">Demo index</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding DemoIndexText}" ToolTip="0 means run all demos" />
+                        <TextBlock Grid.Column="0" Grid.Row="2">Demo length</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding DemoLengthText}" ToolTip="0 means run until another command sent" />
+                        <Button Grid.Column="0" Grid.Row="3" Command="{Binding RunDemoCommand}">Run demo</Button>
+                    </Grid>
+                </GroupBox>
+
+            </StackPanel>
+            <StackPanel>
+                <GroupBox Header="Testing">
+                    <StackPanel>
+                        <ListBox ItemsSource="{Binding Members}" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Skew test">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0">Delay 1</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding SkewDelay1}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1">Delay 2</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SkewDelay2}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2">Delay 3</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SkewDelay3}"/>
+                        <Button Grid.Column="0" Grid.Row="3" Command="{Binding TestSkewCommand}">TestSkew</Button>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="File transfer">
+                    <StackPanel>
+                        <Button Command="{Binding GetFileCommand}">Get file</Button>
+                        <Button Command="{Binding PutFileCommand}">Put file</Button>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <GroupBox Header="Code">
+                <avalonedit:TextEditor 
+                MinWidth="200"
+                            x:Name="textControl" 
+                            FontFamily="Consolas"
+                            FontSize="14"
+                            SyntaxHighlighting="C#"
+                            TextChanged="OnCodeChanged"
+                            ShowLineNumbers="True"
+                            />
+            </GroupBox>
+
+        </StackPanel>
+        <GroupBox Header="Image Testing" DockPanel.Dock="Top" IsEnabled="{Binding Device.IsConnected}">
+            <DockPanel>
+                <GroupBox 
+                    DockPanel.Dock="Left"
+                    Header="Drawing/Send byte(s)" IsEnabled="{Binding Device.IsConnected}" >
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0"   >Repeat count</TextBlock>
+                            <TextBox Grid.Row="0" Grid.Column="1" ToolTip="Number of times to repeat the bytes in send" Text="{Binding RepeatByteText}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0"   >Value(s)</TextBlock>
+                            <TextBox Grid.Row="1" Grid.Column="1" ToolTip="Space or comman separated byte values to send." Text="{Binding SendByteText}"/>
+                        </Grid>
+                        <Button Command="{Binding SendBytesCommand}">Send</Button>
+                        <UniformGrid Columns="3">
+                            <Button Command="{Binding SendRedCommand}">R(0,255,0)</Button>
+                            <Button Command="{Binding SendGreenCommand}">G(255,0,0)</Button>
+                            <Button Command="{Binding SendBlueCommand}">B(0,0,255)</Button>
+                            <Button Command="{Binding SendSyncCommand}">Sync(254)</Button>
+                            <Button Command="{Binding MidCommand}">Mid(99,99,99)</Button>
+                            <Button Command="{Binding ToggleDrawModeCommand}" ToolTip="Enter/Exit drawing mode." >
+                                <Button.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Device.Drawing}" Value="False">
+                                                <Setter Property="Control.Background" Value="Red"/>
+                                                <Setter Property="ContentControl.Content" Value="Enter Drawing"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Device.Drawing}" Value="True">
+                                                <Setter Property="Control.Background" Value="LightGreen"/>
+                                                <Setter Property="ContentControl.Content" Value="Exit Drawing"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+
+                                </Button.Style>
+                            </Button>
+                        </UniformGrid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Solid color/single pixel testing">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Red " Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="Green " Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Text="Blue " Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Text="Pixel " Grid.Row="3" Grid.Column="0"/>
+                        <TextBlock Text="{Binding RedColorValue, StringFormat={}{0:F0}}" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Text="{Binding GreenColorValue, StringFormat={}{0:F0}}" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock Text="{Binding BlueColorValue, StringFormat={}{0:F0}}" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Text="{Binding PixelSliderValue, StringFormat={}{0:F0}}" ToolTip="Use arrow keys for fine tuning" Grid.Row="3" Grid.Column="1"/>
+                        <Slider 
+                        IsSnapToTickEnabled="True" TickFrequency="1"                                    
+                        Minimum="0" Maximum="255" 
+                        Grid.Row="0"  Grid.Column="2" 
+                        Delay="500"
+                        Value="{Binding RedColorValue}"
+                        ToolTip="When changed, fills image with selected color."
+                        />
+                        <Slider 
+                        IsSnapToTickEnabled="True" TickFrequency="1"                                    
+                        Minimum="0" Maximum="255" 
+                        Grid.Row="1"  Grid.Column="2" 
+                        Delay="500"
+                        Value="{Binding GreenColorValue}"
+                        ToolTip="When changed, fills image with selected color."
+                        />
+                        <Slider 
+                        IsSnapToTickEnabled="True" TickFrequency="1"                                    
+                        Minimum="0" Maximum="255"
+                        Grid.Row="2"  Grid.Column="2" 
+                        Delay="500"
+                        Value="{Binding BlueColorValue}"
+                        ToolTip="When changed, fills image with selected color."
+                        />
+
+                        <Slider IsSnapToTickEnabled="True" TickFrequency="1" 
+                            Minimum="0" Maximum="{Binding Device.ImageHeight}" 
+                            Grid.Row="3"  Grid.Column="2" 
+                            Delay="500"
+                            Value="{Binding PixelSliderValue}"
+                            ToolTip="Draw a single pixel of the selected color. Use arrow keys for fine tuning." 
+                            />
+
+
+                    </Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding DrawRandomImageCommand}" ToolTip="Create a random pixel image">Random</Button>
+                        <Button Command="{Binding TestImageCommand}">Test Image Buffer</Button>
+                        <Button Command="{Binding TestCpCommand}">Test C</Button>
+                        <Button Command="{Binding TestFinalImageCommand}">Final Test Image</Button>
+                    </StackPanel>
+                </StackPanel>
+                </GroupBox>
+            </DockPanel>
+        </GroupBox>
+    </DockPanel>
+</UserControl>
